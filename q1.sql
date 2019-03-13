@@ -53,4 +53,5 @@ insert into q1
 SELECT Q1Answer.country_id AS countryId, 
          Q1Answer.partyID1 AS alliedPartyId1, 
          Q1Answer.partyID2 AS alliedPartyId2
-FROM Q1Answer;
+FROM Q1Answer
+ORDER BY countryId DESC, alliedPartyId1 DESC, alliedPartyId2 DESC;
