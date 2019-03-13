@@ -1,0 +1,1 @@
+-- Schema for storing a subset of the Parliaments and Governments database
