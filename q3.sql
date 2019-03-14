@@ -67,7 +67,7 @@ FROM wantedPartyInfo3 w JOIN numOfTimesWon n ON w.party_id = n.party_id;
 CREATE VIEW mostRecentlyWonElection AS
 SELECT p.party_id AS party_id, p.election_id AS election_id, max(e.e_date) AS e_date
 FROM partyWonElection p JOIN election e ON p.election_id = e.id
-GROUP BY p.party_id;
+GROUP BY p.party_id, p.election_id;
 
 --answer
 CREATE VIEW answer AS
