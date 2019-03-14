@@ -1,7 +1,7 @@
 -- Schema for storing a subset of the Parliaments and Governments database
 SET SEARCH_PATH to parlgov;
 
-CREATE TABLE q1(
+CREATE TABLE q2(
 	countryName VARCHAR(50) NOT NULL,
 	partyName name VARCHAR(100) NOT NULL,
 	partyFamily VARCHAR(50) NOT NULL,
@@ -29,7 +29,7 @@ GROUP BY party_id;
 -- find the wanted infomation of all parties
 CREATE VIEW partyInfo AS
 SELECT party_id, family AS partyFamily, state_market AS stateMarket
-FROM party_family, party_position on party_family.party_id = party_position.party_id;
+FROM party_family JOIN party_position on party_family.party_id = party_position.party_id;
 
 --Answer
 insert into q2
