@@ -4,7 +4,7 @@ SET SEARCH_PATH to parlgov;
 DROP TABLE IF EXISTS q2 CASCADE;
 CREATE TABLE q2(
 	countryName VARCHAR(50),
-	partyName name VARCHAR(100),
+	partyName VARCHAR(100),
 	partyFamily VARCHAR(50),
 	stateMarket REAL
 );
@@ -33,12 +33,12 @@ GROUP BY cabinet_party.party_id;
 
 -- find the wanted infomation of all parties
 CREATE VIEW partyInfo AS
-SELECT party_id, family AS partyFamily, state_market AS stateMarket
+SELECT party_position.party_id, family AS partyFamily, state_market AS stateMarket
 FROM party_family JOIN party_position on party_family.party_id = party_position.party_id;
 
 
 --Answer
-insert into q2
+CREATE VIEW Q2Answer
 SELECT countryName,
 	   party.name AS partyName,
 	   partyFamily,
@@ -47,3 +47,8 @@ FROM numOfCabinet4EachCountry, numOfCarbinet4EachParty, partyInfo, party
 WHERE numOfCabinet4EachCountry.numOfCabinet = numOfCarbinet4EachParty.numOfCabinet AND
 	  numOfCarbinet4EachParty.party_id = partyInfo.party_id AND
 	  numOfCarbinet4EachParty.party_id = party.id;
+
+
+insert into q2
+SELECT countryName, partyName, partyFamily, stateMarket
+FROM Q2Answer
