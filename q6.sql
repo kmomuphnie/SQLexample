@@ -60,8 +60,8 @@ CREATE VIEW q6answer AS
 
 INSERT INTO q6
 SELECT countryName, r0_2, r2_4,r4_6,r6_8,r8_10
-FROM q6answer;
-
+FROM q6answer
+ORDER BY countryName;
 
 
 
