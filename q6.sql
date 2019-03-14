@@ -54,7 +54,7 @@ CREATE VIEW partyRange AS
 	ORDER BY partyRange02.country_id;
 
 CREATE VIEW q6answer AS
-	SELECT country_id, county.name AS countryName, r0_2, r2_4,r4_6,r6_8,r8_10
+	SELECT country_id, country.name AS countryName, r0_2, r2_4,r4_6,r6_8,r8_10
 	FROM partyRange JOIN country ON partyRange.country_id = country.id
 	ORDER BY country_id;
 
