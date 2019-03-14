@@ -29,7 +29,7 @@ FROM MaxVote JOIN party ON MaxVote.party_id = party.id;
 CREATE VIEW numOfTimesWon AS
 SELECT party_id, country_id, count(election_id) AS numOfWon
 FROM partyWonElection
-GROUP BY party_id;
+GROUP BY party_id, country_id;
 
 --find the average number of winning elections of parties of the same country
 CREATE VIEW avgWinningElection AS
