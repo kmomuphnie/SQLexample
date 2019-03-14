@@ -25,7 +25,7 @@ WHERE election_result.votes =
 CREATE VIEW numOfTimesWon AS
 SELECT party_id, country_id, count(election_id) AS numOfWon
 FROM partyWonElection
-GROUP BY party_id;
+GROUP BY party_id, country_id;
 
 --find the average number of winning elections of parties of the same country
 CREATE VIEW avgWinningElection AS
@@ -59,7 +59,7 @@ FROM wantedPartyInfo2 w JOIN numOfTimesWon n ON w.party_id = n.party_id;
 CREATE VIEW mostRecentlyWonElection AS
 SELECT p.party_id AS party_id, p.election_id AS election_id, max(e.e_date) AS e_date
 FROM partyWonElection p JOIN election e ON p.election_id = e.id
-GROUP BY p.party_id;
+GROUP BY p.party_id, p.election_id;
 
 --answer
 CREATE VIEW answer AS
