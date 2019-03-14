@@ -41,8 +41,9 @@ CREATE VIEW combinedInfo AS
 CREATE VIEW avgInfo AS
 	SELECT	countryName, year, country_id,party_id, COALESCE(AVG(votes_percentage),0) AS avg_percentage, partyName
 	FROM combinedInfo
-	GROUP BY year, countryName, country_id, party_id, partyName;
-
+	GROUP BY year, countryName, country_id, party_id, partyName
+	HAVING AVG(votes_percentage) > 0;
+	
 CREATE VIEW Q4Answer AS
 	SELECT year, countryName, partyName,
 			(CASE
