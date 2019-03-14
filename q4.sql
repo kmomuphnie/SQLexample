@@ -31,7 +31,7 @@ CREATE VIEW partyEHistory AS
 	FROM party1 JOIN election_result ON party1.party_id = election_result.party_id;
 
 CREATE VIEW combinedInfo AS
-	SELECT country_id,countryName, party_id, partyName, year, COALESCE(CAST (SUM(party_votes) AS FLOAT) / MAX(votesPool),0) AS votes_percentage
+	SELECT country_id,countryName, party_id, partyName, MAX(year) AS year, COALESCE(CAST (SUM(party_votes) AS FLOAT) / MAX(votesPool),0) AS votes_percentage
 	FROM electionHistory JOIN partyEHistory ON electionHistory.election_id = partyEHistory.election_id
 	WHERE electionHistory.year >= 1996 AND
 			electionHistory.year < 2017
