@@ -23,7 +23,7 @@ CREATE VIEW partyRange02 AS
 CREATE VIEW partyRange24 AS
 	SELECT party.country_id, count(*) AS r2_4
 	FROM party JOIN party_position ON party.id = party_position.party_id
-	WHERE party_position.left_right >=2 AND party_position.left_right < =4
+	WHERE party_position.left_right >=2 AND party_position.left_right < 4
 	GROUP BY party.country_id;
 
 CREATE VIEW partyRange46 AS
