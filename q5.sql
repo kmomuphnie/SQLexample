@@ -24,17 +24,17 @@ CREATE VIEW avgPRatios AS
 	GROUP BY allPRatios.country_id, allPRatios.year;
 
 CREATE VIEW coutryInvalid AS
-	SELECT A1.country_id, A1.countryName, A1.participationRatio, A1.year
+	SELECT DISTINCT A1.country_id AS country_id
 	FROM avgPRatios A1 JOIN avgPRatios A2 ON A1.country_id = A2.country_id
 	WHERE A1.year < A2.year AND
 			A1.participationRatio > A2.participationRatio;
 
 CREATE VIEW countryValid AS
-	(SELECT country_id, countryName, participationRatio, year
-		FROM avgPRatios)
+	SELECT country_id, countryName, participationRatio, year
+		FROM avgPRatios
 	EXCEPT
-	(SELECT country_id, countryName, participationRatio, year
-		FROM coutryInvalid);
+	SELECT country_id, countryName, participationRatio, year
+		FROM avgPRatios JOIN coutryInvalid ON avgPRatios.country_id = coutryInvalid.country_id;
 
 INSERT INTO q5
 SELECT countryName, year, participationRatio
