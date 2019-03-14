@@ -4,7 +4,7 @@ SET SEARCH_PATH TO parlgov;
 drop table if exists q4 cascade;
 
 
-CREATE TABLE q4(
+CREATE TABLE q6(
         countryName VARCHAR(50),
         r0_2 INT,
         r2_4 INT,
