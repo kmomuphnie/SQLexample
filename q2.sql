@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS Q2Answer CASCADE;
 --find out how many cabinets created in each country for the past 20 years
 
 CREATE VIEW numOfCabinet4EachCountry AS
-	SELECT country.id, country.name AS countryName, COUNT(DISTINCT cabinet.id) AS numOfCabinet
+	SELECT cabinet.country_id, country.name AS countryName, COUNT(DISTINCT cabinet.id) AS numOfCabinet
 	FROM country JOIN cabinet on country.id = cabinet.country_id
 	WHERE cabinet.start_date >= '1996-01-01' AND
 	      cabinet.start_date < '2017-01-01'
