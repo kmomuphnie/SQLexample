@@ -8,7 +8,7 @@ CREATE TABLE q3(
 	partyFamily VARCHAR(50),
 	wonElections INT,
 	mostRecentlyWonElectionId INT,
-	mostRecentlyWonElectionYear DATE
+	mostRecentlyWonElectionYear INT
 );
 
 -- find out the winner of each election of each country
@@ -63,7 +63,8 @@ GROUP BY p.party_id, p.election_id;
 
 --answer
 CREATE VIEW answer AS
-SELECT w.countryName AS countryName, w.partyFamily AS partyFamily, w.wonElections AS wonElections, m.election_id AS mostRecentlyWonElectionId, m.e_date AS mostRecentlyWonElectionYear
+SELECT w.countryName AS countryName, w.partyFamily AS partyFamily, w.wonElections AS wonElections, 
+		m.election_id AS mostRecentlyWonElectionId, m.e_date AS mostRecentlyWonElectionYear
 FROM wantedPartyInfo3 w JOIN mostRecentlyWonElection m ON w.party_id = m.party_id;
 
 INSERT INTO q3
