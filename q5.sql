@@ -21,7 +21,7 @@ CREATE VIEW allPRatios AS
 CREATE VIEW avgPRatios AS
 	SELECT country_id, countryName, AVG(CAST(participationRatio AS FLOAT)) AS participationRatio, year
 	FROM allPRatios
-	GROUP BY allPRatios.country_id, allPRatios.year;
+	GROUP BY allPRatios.country_id, allPRatios.year, allPRatios.countryName;
 
 CREATE VIEW coutryInvalid AS
 	SELECT DISTINCT A1.country_id AS country_id
