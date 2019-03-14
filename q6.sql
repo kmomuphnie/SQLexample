@@ -15,31 +15,31 @@ CREATE TABLE q6(
 
 --find number of parties whose position is in each range for each country
 CREATE VIEW partyRange02 AS
-	SELECT party.country_id, count(*) AS r0_2
+	SELECT party.country_id, COALESCE(count(*), 0) AS r0_2
 	FROM party JOIN party_position ON party.id = party_position.party_id
 	WHERE party_position.left_right >=0 AND party_position.left_right < 2
 	GROUP BY party.country_id;
 
 CREATE VIEW partyRange24 AS
-	SELECT party.country_id, count(*) AS r2_4
+	SELECT party.country_id, COALESCE(count(*), 0) AS r2_4
 	FROM party JOIN party_position ON party.id = party_position.party_id
 	WHERE party_position.left_right >=2 AND party_position.left_right < 4
 	GROUP BY party.country_id;
 
 CREATE VIEW partyRange46 AS
-	SELECT party.country_id, count(*) AS r4_6
+	SELECT party.country_id, COALESCE(count(*), 0) AS r4_6
 	FROM party JOIN party_position ON party.id = party_position.party_id
 	WHERE party_position.left_right >=4 AND party_position.left_right < 6
 	GROUP BY party.country_id;
 
 CREATE VIEW partyRange68 AS
-	SELECT party.country_id, count(*) AS r6_8
+	SELECT party.country_id, COALESCE(count(*), 0) AS r6_8
 	FROM party JOIN party_position ON party.id = party_position.party_id
 	WHERE party_position.left_right >=6 AND party_position.left_right < 8
 	GROUP BY party.country_id;
 
 CREATE VIEW partyRange810 AS
-	SELECT party.country_id, count(*) AS r8_10
+	SELECT party.country_id, COALESCE(count(*), 0) AS r8_10
 	FROM party JOIN party_position ON party.id = party_position.party_id
 	WHERE party_position.left_right >=8 AND party_position.left_right <= 10
 	GROUP BY party.country_id;
