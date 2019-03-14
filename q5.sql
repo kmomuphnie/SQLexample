@@ -22,13 +22,14 @@ CREATE VIEW avgPRatios AS
 	SELECT country_id, countryName, AVG(CAST(participationRatio AS FLOAT)) AS participationRatio, year
 	FROM allPRatios
 	GROUP BY allPRatios.country_id, allPRatios.year, allPRatios.countryName;
-
+--find countries break the rule
 CREATE VIEW coutryInvalid AS
 	SELECT DISTINCT A1.country_id AS country_id
 	FROM avgPRatios A1 JOIN avgPRatios A2 ON A1.country_id = A2.country_id
 	WHERE A1.year < A2.year AND
 			A1.participationRatio > A2.participationRatio;
 
+--intercept to get all the valid countries
 CREATE VIEW countryValid AS
 	SELECT country_id, countryName, participationRatio, year
 		FROM avgPRatios
