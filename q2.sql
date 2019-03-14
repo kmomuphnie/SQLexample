@@ -36,7 +36,7 @@ WHERE n1.numOfCabinet = n2.numOfCabinet AND
 -- find the wanted infomation of all parties
 CREATE VIEW partyInfo AS
 SELECT party_position.party_id, family AS partyFamily, state_market AS stateMarket
-FROM party_family JOIN party_position ON party_family.party_id = party_position.party_id, wantedParty
+FROM party_family FULL JOIN party_position ON party_family.party_id = party_position.party_id, wantedParty
 WHERE wantedParty.party_id = party_position.party_id;
 
 --find party name and country id
