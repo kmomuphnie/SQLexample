@@ -4,7 +4,7 @@ SET SEARCH_PATH to parlgov;
 CREATE TABLE q2(
 	countryName VARCHAR(50),
 	partyName VARCHAR(100),
-	partyFamily VARCHAR(50),
+	partyFamily VARCHAR(50) ,
 	stateMarket REAL
 );
 
@@ -19,17 +19,25 @@ GROUP BY country.id, country.name;
 
 --find out how many cabinets a party has been joined for the past 20 years
 CREATE VIEW numOfCarbinet4EachParty AS
-SELECT party_id, COUNT(cabinet.id) AS numOfCabinet
+SELECT party_id, country_id, COUNT(cabinet.id) AS numOfCabinet
 FROM cabinet_party, cabinet
 WHERE cabinet.start_date >= '1996-01-01' AND
 	  cabinet.start_date < '2017-01-01' AND
 	  cabinet_party.cabinet_id = cabinet.id
-GROUP BY party_id;
+GROUP BY party_id, country_id;
+
+--find the wanted party id
+CREATE VIEW wantedParty AS
+SELECT n2.party_id
+FROM numOfCabinet4EachCountry n1, numOfCarbinet4EachParty n2
+WHERE n1.numOfCabinet = n2.numOfCabinet AND
+	  n1.id = n2.country_id;
 
 -- find the wanted infomation of all parties
 CREATE VIEW partyInfo AS
 SELECT party_position.party_id, family AS partyFamily, state_market AS stateMarket
-FROM party_family JOIN party_position ON party_family.party_id = party_position.party_id;
+FROM party_family JOIN party_position ON party_family.party_id = party_position.party_id, wantedParty
+WHERE wantedParty.party_id = party_position.party_id;
 
 --find party name and country id
 CREATE VIEW partyInfo2 AS
