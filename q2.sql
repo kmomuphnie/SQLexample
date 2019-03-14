@@ -39,11 +39,8 @@ CREATE VIEW partyInfo AS
 
 
 --Answer
-CREATE VIEW Q2Answer
-	SELECT countryName,
-	   party.name AS partyName,
-	   partyFamily,
-	   stateMarket
+CREATE VIEW q2Answer AS
+	SELECT numOfCabinet4EachCountry.countryName, party.name AS partyName, partyFamily, stateMarket
 	FROM numOfCabinet4EachCountry, numOfCarbinet4EachParty, partyInfo, party, country
 	WHERE numOfCarbinet4EachParty.partyCabinetTimes = numOfCabinet4EachCountry.numOfCabinet AND
 	  		numOfCarbinet4EachParty.party_id = partyInfo.party_id AND
@@ -53,4 +50,4 @@ CREATE VIEW Q2Answer
 
 insert into q2
 SELECT countryName, partyName, partyFamily, stateMarket
-FROM Q2Answer;
+FROM q2Answer;
