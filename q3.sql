@@ -56,7 +56,7 @@ SELECT w.party_id AS party_id, w.countryName AS countryName, w.partyFamily AS pa
 FROM wantedPartyInfo2 w JOIN numOfTimesWon n ON w.party_id = n.party_id;
 
 CREATE VIEW wantedPartyInfo4 AS
-SELECT wantedPartyInfo3.party_id, wantedPartyInfo3.countryName, wantedPartyInfo3.partyFamily, wantedPartyInfo3.wonElections, party.name AS partyName
+SELECT w.party_id, w.countryName, w.partyFamily, w.wonElections, n.name AS partyName
 FROM wantedPartyInfo3 w JOIN party n ON w.party_id = n.id;
 
 --find most recently won election id and year
