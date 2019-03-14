@@ -15,7 +15,7 @@ CREATE VIEW allPRatios AS
 	FROM election JOIN country ON election.country_id = country.id
 	WHERE EXTRACT(YEAR FROM e_date) >= 2001 AND
 			EXTRACT(YEAR FROM e_date) <=2016
-	GROUP BY election.country_id, election.id;
+	GROUP BY election.country_id, election.id, country.name;
 
 --in case in some year, some countries have more than one election
 CREATE VIEW avgPRatios AS
