@@ -34,7 +34,7 @@ CREATE VIEW countryValid AS
 		FROM avgPRatios
 	EXCEPT
 	SELECT A1.country_id, A1.countryName, A1.participationRatio, A1.year
-		FROM avgPRatios A1 JOIN coutryInvalid ON avgPRatios.country_id = coutryInvalid.country_id;
+		FROM avgPRatios A1 JOIN coutryInvalid ON A1.country_id = coutryInvalid.country_id;
 
 INSERT INTO q5
 SELECT countryName, year, participationRatio
