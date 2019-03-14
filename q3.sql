@@ -55,6 +55,10 @@ CREATE VIEW wantedPartyInfo3 AS
 SELECT w.party_id AS party_id, w.countryName AS countryName, w.partyFamily AS partyFamily, n.numOfWon AS wonElections
 FROM wantedPartyInfo2 w JOIN numOfTimesWon n ON w.party_id = n.party_id;
 
+CREATE VIEW wantedPartyInfo4 AS
+SELECT wantedPartyInfo3.party_id, wantedPartyInfo3.countryName, wantedPartyInfo3.partyFamily, wantedPartyInfo3.wonElections, party.name AS partyName
+FROM wantedPartyInfo3 w JOIN party n ON w.party_id = n.party_id;
+
 --find most recently won election id and year
 CREATE VIEW mostRecentlyWonElection AS
 SELECT p.party_id AS party_id, p.election_id AS election_id, max(e.e_date) AS e_date
@@ -63,10 +67,14 @@ GROUP BY p.party_id, p.election_id;
 
 --answer
 CREATE VIEW answer AS
-SELECT w.countryName AS countryName, w.partyFamily AS partyFamily, w.wonElections AS wonElections, 
+SELECT w.countryName AS countryName, w.partyName AS partyName, w.partyFamily AS partyFamily, w.wonElections AS wonElections, 
 		m.election_id AS mostRecentlyWonElectionId, m.e_date AS mostRecentlyWonElectionYear
-FROM wantedPartyInfo3 w JOIN mostRecentlyWonElection m ON w.party_id = m.party_id;
+FROM wantedPartyInfo4 w JOIN mostRecentlyWonElection m ON w.party_id = m.party_id;
 
 INSERT INTO q3
-SELECT *
+SELECT answer.countryName, answer.partyName, 
+		answer.partyFamily, answer.wonElections, 
+		answer.mostRecentlyWonElectionId, EXTRACT(YEAR FROM answer.mostRecentlyWonElectionYear)
 FROM answer;
+
+
