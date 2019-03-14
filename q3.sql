@@ -94,7 +94,7 @@ GROUP BY p.party_id;
 -- WHERE m.party_id = p.party_id AND p.country_id = e.country_id AND m.e_date = e.e_date;
 CREATE VIEW mostRecentlyWonElection AS
 SELECT DISTINCT p.party_id, m.e_date, e.id AS election_id
-FROM (mostRecentlyWonElectionYe m NATURAL JOIN partyWonElection p) NATRUAL JOIN election e;
+FROM (mostRecentlyWonElectionYe m NATURAL JOIN partyWonElection p) NATURAL JOIN election e;
 
 --answer
 CREATE VIEW answer AS
