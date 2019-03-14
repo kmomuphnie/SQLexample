@@ -12,10 +12,11 @@ CREATE TABLE q2(
 DROP TABLE IF EXISTS numOfCabinet4EachCountry CASCADE;
 DROP TABLE IF EXISTS numOfCarbinet4EachParty CASCADE;
 DROP TABLE IF EXISTS partyInfo CASCADE;
+DROP TABLE IF EXISTS Q2Answer CASCADE;
 
 --find out how many cabinets created in each country for the past 20 years
 CREATE VIEW numOfCabinet4EachCountry AS
-SELECT country.id, country.name, COUNT(cabinet.id) AS numOfCabinet
+SELECT country.id, country.name AS countryName, COUNT(cabinet.id) AS numOfCabinet
 FROM country, cabinet
 WHERE country.id = cabinet.country_id AND
 	  cabinet.start_date >= '1996-01-01' AND
@@ -51,4 +52,4 @@ WHERE numOfCabinet4EachCountry.numOfCabinet = numOfCarbinet4EachParty.numOfCabin
 
 insert into q2
 SELECT countryName, partyName, partyFamily, stateMarket
-FROM Q2Answer
+FROM Q2Answer;
