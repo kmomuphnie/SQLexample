@@ -55,27 +55,12 @@ CREATE VIEW partyRange AS
 
 CREATE VIEW q6answer AS
 	SELECT country_id, country.name AS countryName, 
-			（CASE WHEN r0_2 IS NOT NULL 
-				THEN r0_2
-				ELSE 0
-			 END）AS r0_2, 
-			（CASE WHEN r2_4 IS NOT NULL 
-				THEN r2_4
-				ELSE 0
-			 END）AS r2_4, 
-			（CASE WHEN r4_6 IS NOT NULL 
-				THEN r4_6
-				ELSE 0
-			 END）AS r4_6, 
-			（CASE WHEN r6_8 IS NOT NULL 
-				THEN r6_8
-				ELSE 0
-			 END）AS r6_8, 
-			（CASE WHEN r8_10 IS NOT NULL 
-				THEN r8_10
-				ELSE 0
-			 END）AS r8_10
-	FROM country JOIN partyRange ON partyRange.country_id = country.id
+			COALESCE(r0_2, 0) AS r0_2, 
+			COALESCE(r2_4, 0) AS r2_4, 
+			COALESCE(r4_6, 0) AS r4_6, 
+			COALESCE(r6_8, 0) AS r6_8, 
+			COALESCE(r8_10, 0) AS r8_10
+	FROM country LEFT JOIN partyRange ON partyRange.country_id = country.id
 	ORDER BY country_id;
 
 INSERT INTO q6
