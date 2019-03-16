@@ -112,33 +112,29 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
         // System.out.println("Hello");
 
-        try{
-            Assignment2 test = new Assignment2();
+         try {
+            Assignment2 testcase = new Assignment2();
+            testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
+            ElectionCabinetResult a = testcase.electionSequence("Japan");
 
-        test.connectDB(
-            "jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", 
-            "cuidongf", "");
+            System.out.println("election id | cabinet id");
 
-        // Test election sequence
-        System.out.println("Test 1:");
-        ElectionCabinetResult a = test.electionSequence("Canada");
-        for(int i = 0; i < a.elections.size(); ++i) {
-            System.out.println("Election: " + a.elections.get(i) + " Cabinet: " + a.cabinets.get(i));
+            for(int i = 0; i < a.elections.size(); ++i) {
+                System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
+            }
+            
+                       // // Test findSimilarPoliticians
+            List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
+            System.out.println("Test 2:");
+            for(int i : b) {
+                 System.out.println(i);
+            }
+
+            testcase.disconnectDB();
         }
 
-        // Test findSimilarPoliticians
-        List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
-        System.out.println("Test 2:");
-        for(int i : b) {
-            System.out.println(i);
-        }
-
-        test.disconnectDB();
-        }
-        
-        catch (SQLException se) {
-            System.err.println("SQL Exception." +
-                        "<Message>: " + se.getMessage());
+        catch (ClassNotFoundException e) {
+            System.out.println("Failed to find JDBC driver");
         }
     }
 
