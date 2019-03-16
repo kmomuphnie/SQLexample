@@ -180,7 +180,7 @@ public class Assignment2 extends JDBCSubmission {
             Assignment2 test = new Assignment2();
 
             test.connectDB(
-                "jdbc:postgresql://localhost:5432/csc343h-kongzhao?currentSchema=parlgov", 
+                "jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", 
                 "kongzhao", "");
 
          // Test election sequence
