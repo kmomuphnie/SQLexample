@@ -46,60 +46,163 @@ public class Assignment2 extends JDBCSubmission {
         return false;
     }
 
+    // @Override
+    // public ElectionCabinetResult electionSequence(String countryName) {
+    //     // Implement this method!
+    //     ResultSet rs;
+    //     PreparedStatement stmt;
+    //     String sql;
+    //     //build the report list
+    //     List<Integer> electionId = new ArrayList<Integer>();
+    //     List<Integer> cabinetId = new ArrayList<Integer>();
+    //     ElectionCabinetResult result;
+
+    //     try{
+    //         sql = "SELECT e.id AS electionId, cabinet.id AS cabinetId " +
+    //               "FROM country, election e, cabinet " + "WHERE country.name = ? AND " + 
+    //               "e.country_id = country.id AND cabinet.country_id = country.id AND " +
+    //               "cabinet.election_id = e.id " + "ORDER BY e.e_date DESC;";
+
+    //         stmt = connection.prepareStatement(sql);
+    //         stmt.setString(1, countryName);
+    //         //execute the SQL query
+    //         rs = stmt.executeQuery();
+
+    //         //insert the results into the lists
+    //         while(rs.next()){
+    //             electionId.add(rs.getInt("electionId"));
+    //             cabinetId.add(rs.getInt("cabinetId"));
+    //         }
+    //         rs.close();
+    //         result = new ElectionCabinetResult(electionId, cabinetId);
+    //         return result;
+    //     }
+    //     catch(SQLException se){
+    //         return null;
+    //     }
+    // }
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
         // Implement this method!
-        ElectionCabinetResult answer = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> () );
-
         try{
+            String sql;
+            sql = "SELECT e.id AS electionId, cabinet.id AS cabinetId " +
+                  "FROM country, election e, cabinet " + "WHERE country.name = ? AND " + 
+                  "e.country_id = country.id AND cabinet.country_id = country.id AND " +
+                  "cabinet.election_id = e.id " + "ORDER BY e.e_date DESC;";
 
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, countryName);
+            ResultSet rs = stmt.executeQuery();
 
+            List<Integer> electionId = new ArrayList<Integer>();
+            List<Integer> cabinetId = new ArrayList<Integer>();
 
-
-
-
-
-            return answer;
+            while(rs.next()){
+                electionId.add(rs.getInt("electionId"));
+                cabinetId.add(rs.getInt("cabinetId"));
+            }
+            rs.close();
+            return new ElectionCabinetResult(electionId, cabinetId);
         }
-
         catch(SQLException se){
-            System.err.println("SQL EXCEPTION: <MESSAGE:> " + se.getMessage());
             return null;
         }
-        //return null;
     }
 
     @Override
     public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
         // Implement this method!
-        return null;
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        String givenPresidentQ;
+        String allPresidentQ;
+        
+        PreparedStatement psGiven;
+        PreparedStatement psAll;
+
+        ResultSet infoResult1;
+        ResultSet infoResult2;
+
+        try{
+            //first find the info of given president
+            givenPresidentQ = "SELECT id, description, comment " +
+                                "FROM politician_president " + 
+                                "WHERE id = ?";
+            psGiven = connection.prepareStatement(givenPresidentQ);
+            pStatement.setInt(1, politicianName);
+            infoResult1 = psGiven.executeQuery();
+
+            //put the given president info into the string
+            String givenPInfo = new String("");   
+            while(infoResult1.next()) {
+                //givenPInfo = infoResult1.getString("description") + " " + infoResult1.getString("comment");
+                givenPInfo = infoResult1.getString("description");
+            }
+
+
+
+
+            //then select other president except the given one
+            allPresidentQ = "SELECT id, description, comment " +
+                    "FROM politician_president " + 
+                    "WHERE id != " + Integer.toString(politicianName);
+            
+            psAll = connection.prepareStatement(allPresidentQ);
+            infoResult2 = psAll.executeQuery();
+
+            while(infoResult2.next()){
+                //String tempPInfo = infoResult2.getString("description") + " " + infoResult2.getString("comment");
+                String tempPInfo = infoResult2.getString("description");
+                //compare everyone with the given one
+                double JSimilarity = similarity(tempPInfo, givenPInfo);
+                //have the id ready
+                int validID = infoResult2.getInt("id");
+                if (JSimilarity >= threshold) {
+                    result.add(validID);
+                }
+            }
+        }
+        catch (SQLException se) {
+            System.err.println("SQL Exception." + "<Message>: " + se.getMessage());
+            return null;
+        }
+        return result;
     }
+
+
 
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
         //System.out.println("Hello");
+          // You can put testing code in here. It will not affect our autotester.
+        System.out.println("Hello");
+
+        Assignment2 test = new Assignment2();
+
+        test.connectDB(
+            "jdbc:postgresql://localhost:5432/csc343h-kongzhao?currentSchema=parlgov", 
+            "kongzhao", "");
+
+        // Test election sequence
+        System.out.println("Test 1:");
+        ElectionCabinetResult a = test.electionSequence("Canada");
+        for(int i = 0; i < a.elections.size(); ++i) {
+            System.out.println("Election: " + a.elections.get(i) + " Cabinet: " + a.cabinets.get(i));
+        }
+
+        // Test findSimilarPoliticians
+        List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
+        System.out.println("Test 2:");
+        for(int i : b) {
+            System.out.println(i);
+        }
+
+        test.disconnectDB();
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
