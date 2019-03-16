@@ -131,7 +131,7 @@ public class Assignment2 extends JDBCSubmission {
                                 "FROM politician_president " + 
                                 "WHERE id = ?";
             psGiven = connection.prepareStatement(givenPresidentQ);
-            pStatement.setInt(1, politicianName);
+            psGiven.setInt(1, politicianName);
             infoResult1 = psGiven.executeQuery();
 
             //put the given president info into the string
