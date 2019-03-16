@@ -112,7 +112,8 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
         // System.out.println("Hello");
 
-        Assignment2 test = new Assignment2();
+        try{
+            Assignment2 test = new Assignment2();
 
         test.connectDB(
             "jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", 
@@ -133,7 +134,12 @@ public class Assignment2 extends JDBCSubmission {
         }
 
         test.disconnectDB();
-
+        }
+        
+        catch (SQLException se) {
+            System.err.println("SQL Exception." +
+                        "<Message>: " + se.getMessage());
+        }
     }
 
 }
