@@ -181,7 +181,7 @@ public class Assignment2 extends JDBCSubmission {
 
             test.connectDB(
                 "jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", 
-                "kongzhao", "");
+                "cuidongf", "");
 
          // Test election sequence
             System.out.println("Test 1:");
