@@ -27,7 +27,6 @@ public class Assignment2 extends JDBCSubmission {
             // System.out.println("Connection Failed");
             return false;
         }
-        return false;
     }
 
     @Override
@@ -177,29 +176,33 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
         //System.out.println("Hello");
           // You can put testing code in here. It will not affect our autotester.
-        System.out.println("Hello");
+        try{
+            Assignment2 test = new Assignment2();
 
-        Assignment2 test = new Assignment2();
+            test.connectDB(
+                "jdbc:postgresql://localhost:5432/csc343h-kongzhao?currentSchema=parlgov", 
+                "kongzhao", "");
 
-        test.connectDB(
-            "jdbc:postgresql://localhost:5432/csc343h-kongzhao?currentSchema=parlgov", 
-            "kongzhao", "");
-
-        // Test election sequence
-        System.out.println("Test 1:");
-        ElectionCabinetResult a = test.electionSequence("Canada");
-        for(int i = 0; i < a.elections.size(); ++i) {
-            System.out.println("Election: " + a.elections.get(i) + " Cabinet: " + a.cabinets.get(i));
-        }
+         // Test election sequence
+            System.out.println("Test 1:");
+            ElectionCabinetResult a = test.electionSequence("Canada");
+            for(int i = 0; i < a.elections.size(); ++i) {
+                System.out.println("Election: " + a.elections.get(i) + " Cabinet: " + a.cabinets.get(i));
+            }
 
         // Test findSimilarPoliticians
-        List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
-        System.out.println("Test 2:");
-        for(int i : b) {
-            System.out.println(i);
-        }
+            List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
+            System.out.println("Test 2:");
+            for(int i : b) {
+                System.out.println(i);
+            }
 
-        test.disconnectDB();
+            test.disconnectDB();
+        }
+        catch (ClassNotFoundException e) {
+		    System.out.println("Failed to find JDBC driver");
+		}
+        
     }
 
 }
