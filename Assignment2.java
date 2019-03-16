@@ -1,10 +1,10 @@
 import java.sql.*;
 import java.util.List;
-
+import java.util.ArrayList;
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
 // Solutions that use only or mostly Java will not receive a high mark.
-import java.util.ArrayList;
+//import java.util.ArrayList;
 //import java.util.Map;
 //import java.util.HashMap;
 //import java.util.Set;
@@ -25,6 +25,7 @@ public class Assignment2 extends JDBCSubmission {
         } 
         catch(SQLException e){
             // System.out.println("Connection Failed");
+            System.err.println("SQL Exception." + "<Message>: " + e.getMessage());
             return false;
         }
     }
@@ -105,6 +106,7 @@ public class Assignment2 extends JDBCSubmission {
             return new ElectionCabinetResult(electionId, cabinetId);
         }
         catch(SQLException se){
+            System.err.println("SQL Exception." + "<Message>: " + se.getMessage());
             return null;
         }
     }
@@ -139,9 +141,6 @@ public class Assignment2 extends JDBCSubmission {
                 //givenPInfo = infoResult1.getString("description") + " " + infoResult1.getString("comment");
                 givenPInfo = infoResult1.getString("description");
             }
-
-
-
 
             //then select other president except the given one
             allPresidentQ = "SELECT id, description, comment " +
@@ -180,16 +179,18 @@ public class Assignment2 extends JDBCSubmission {
             Assignment2 testcase = new Assignment2();
             testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
             ElectionCabinetResult a = test.electionSequence("Japan");
-           System.out.println(a.elections.get("election id | cabinet id");
-             for(int i = 0; i < a.elections.size(); ++i) {
-             System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
+
+            System.out.println("election id | cabinet id");
+
+            for(int i = 0; i < a.elections.size(); ++i) {
+                System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
             }
             
 			              // // Test findSimilarPoliticians
-             List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
+            List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
             System.out.println("Test 2:");
             for(int i : b) {
-           	 System.out.println(i);
+           	    System.out.println(i);
             }
 
             test.disconnectDB();
