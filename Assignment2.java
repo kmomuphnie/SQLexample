@@ -178,7 +178,7 @@ public class Assignment2 extends JDBCSubmission {
          try {
             Assignment2 testcase = new Assignment2();
             testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
-            ElectionCabinetResult a = test.electionSequence("Japan");
+            ElectionCabinetResult a = testcase.electionSequence("Japan");
 
             System.out.println("election id | cabinet id");
 
@@ -187,13 +187,13 @@ public class Assignment2 extends JDBCSubmission {
             }
             
 			              // // Test findSimilarPoliticians
-            List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
+            List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
             System.out.println("Test 2:");
             for(int i : b) {
            	    System.out.println(i);
             }
 
-            test.disconnectDB();
+            testcase.disconnectDB();
         }
 
         catch (ClassNotFoundException e) {
