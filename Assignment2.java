@@ -1,242 +1,199 @@
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.Arrays;
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
 // Solutions that use only or mostly Java will not receive a high mark.
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+//import java.util.ArrayList;
+//import java.util.Map;
+//import java.util.HashMap;
 //import java.util.Set;
 //import java.util.HashSet;
 public class Assignment2 extends JDBCSubmission {
-    
+
     public Assignment2() throws ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
     }
 
     @Override
-    public boolean connectDB(String url, String username, String password) {    
-    try {
-        connection = DriverManager.getConnection(url, username, password);
-        return true;
-    } 
-    catch (SQLException e) {
-        System.err.println("SQL Exception." + "<Message>:" + e.getMessage());
-        return false;       
-    }
-    
+    public boolean connectDB(String url, String username, String password) {
+        // Implement this method!
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            return true;
+        } 
+        catch(SQLException e){
+            // System.out.println("Connection Failed");
+            System.err.println("SQL Exception." + "<Message>: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean disconnectDB() {
-    try {
-        connection.close();
-        return true;
-    }
-    catch (SQLException e) {
-        System.err.println("SQL Exception." + "<Message>:" + e.getMessage());
+        // Implement this method!
+        if(connection != null) {
+            try {
+                connection.close();
+                return true;
+            } 
+            catch (SQLException se) {
+                System.err.println("SQL Exception." + "<Message>:" + se.getMessage());
+                return false;
+            }
+        }
         return false;
-    }
     }
 
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
-    ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
-    try {   
-        String clearTables = "DROP VIEW IF EXISTS intermediate CASCADE";    
-        PreparedStatement dropState = connection.prepareStatement(clearTables);
-        dropState.execute();
+        // Implement this method!
+        ResultSet rs;
+        PreparedStatement stmt;
+        String sql;
+        //build the report list
+        List<Integer> electionId = new ArrayList<Integer>();
+        List<Integer> cabinetId = new ArrayList<Integer>();
+        ElectionCabinetResult result;
 
-        String countryQuery = "SELECT id FROM country WHERE name = ?";
-        PreparedStatement countrystatement = connection.prepareStatement(countryQuery);
-        countrystatement.setString(1, countryName);
-        ResultSet countryRes = countrystatement.executeQuery();
-        countryRes.next();
-        int countryId = countryRes.getInt("id");
-        
+        try{
+            sql = "SELECT e.id AS electionId, cabinet.id AS cabinetId " +
+                  "FROM country, election e, cabinet " + "WHERE country.name = ? AND " + 
+                  "e.country_id = country.id AND cabinet.country_id = country.id AND " +
+                  "cabinet.election_id = e.id " + "ORDER BY e.e_date DESC;";
 
-        String ElectionQuery = "CREATE VIEW intermediate AS SELECT id, e_date, e_type AS type FROM election WHERE country_id = " + Integer.toString(countryId) + " ORDER BY e_date DESC";
-        PreparedStatement ElecState = connection.prepareStatement(ElectionQuery);       
-        ElecState.execute();
-        
-        String searchelQ = "SELECT * FROM intermediate";
-        PreparedStatement sestate = connection.prepareStatement(searchelQ);
-        ResultSet seRes = sestate.executeQuery();
-        
-        ArrayList<Integer> electionIds = new ArrayList<Integer>();
-        while (seRes.next()) {
-            int NeId = seRes.getInt("id");
-            electionIds.add(NeId);
-        }
-        
+            stmt = connection.prepareStatement(sql);
+            stmt.setString(1, countryName);
+            //execute the SQL query
+            rs = stmt.executeQuery();
 
-
-        for (int i=0; i<electionIds.size(); i++) {
-            int currId = electionIds.get(i);
-            String updateQuery = "SELECT id FROM cabinet WHERE election_id = ? ORDER BY start_date";
-            PreparedStatement updateState = connection.prepareStatement(updateQuery);
-            updateState.setInt(1, currId);
-            ResultSet updateRes = updateState.executeQuery();
-            while (updateRes.next()) {
-                int cabId = updateRes.getInt("id");
-                result.elections.add(currId);
-                result.cabinets.add(cabId);
+            //insert the results into the lists
+            while(rs.next()){
+                electionId.add(rs.getInt("electionId"));
+                cabinetId.add(rs.getInt("cabinetId"));
             }
-            
+            rs.close();
+            result = new ElectionCabinetResult(electionId, cabinetId);
+            return result;
         }
-        return result;
-
-        
-    }
-    catch (SQLException se)
-    {
-        System.err.println("SQL EXCEPTION: <MESSAGE:> " + se.getMessage());
-        return null;
-    }
-
+        catch(SQLException se){
+            return null;
+        }
     }
 
 
     @Override
-    public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
+    public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
         // Implement this method!
-        List<Integer> similarPresidents = new ArrayList<Integer>();
-        Connection conn = this.connection;
-        PreparedStatement pStatement;
-        ResultSet rs;
-        String queryString;
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        String givenPresidentQ;
+        String allPresidentQ;
         
-        try {
-            Class.forName("org.postgresql.Driver");
-        }
-        catch (ClassNotFoundException e) {
-            System.out.println("Failed to find the JDBC driver");
-        }
-        
-        try {
-            /* Query1: Table with a single tuple, containing the
-             * id, description, and comment of the input politician 
-             */
+        PreparedStatement psGiven;
+        PreparedStatement psAll;
+
+        ResultSet infoResult1;
+        ResultSet infoResult2;
+
+        try{
+            //first find the info of given president
+            givenPresidentQ = "SELECT id, description, comment " +
+                                "FROM politician_president " + 
+                                "WHERE id = ?";
+            psGiven = connection.prepareStatement(givenPresidentQ);
+            psGiven.setInt(1, politicianName);
+            infoResult1 = psGiven.executeQuery();
+
+            //put the given president info into the string
+            String givenPInfoD = new String("");   
+            String givenPInfoC = new String("");
+            String givenPInfoDC = new String("");
+            String givenPInfoCD = new String("");
+            while(infoResult1.next()) {
+                givenPInfoD = infoResult1.getString("description");
+                givenPInfoC = infoResult1.getString("comment");
+                givenPInfoDC = infoResult1.getString("description") + " " + infoResult1.getString("comment");
+                givenPInfoCD = infoResult1.getString("comment") + " " + infoResult1.getString("description");
+
+            }
             
-            queryString = "SELECT id, description, comment " +
+
+
+            //then select other president except the given one
+            allPresidentQ = "SELECT id, description, comment " +
                     "FROM politician_president " + 
-                    "WHERE id = ?";
-           
-            pStatement = conn.prepareStatement(queryString);
-            pStatement.setInt(1, politicianId);
-            rs = pStatement.executeQuery();
-            rs.next();
+                    "WHERE id != " + Integer.toString(politicianName);
             
-            String presidentInput = rs.getString("description") + 
-                    " " + rs.getString("comment");
-            
-            //TESTING
-//          System.out.println(presidentInput);
-//          System.out.println("\n");
-            
-            // Query 2: Table of tuples consisting of all politician IDs, 
-            // description, and comments in the politician_president relation 
-            // who are not the input president's ID
-            
-            queryString = "SELECT id, description, comment " +
-                    "FROM politician_president " + 
-                    "WHERE id != " + Integer.toString(politicianId);
-            pStatement = conn.prepareStatement(queryString);
-            rs = pStatement.executeQuery();
-            
-            
-            /* NOTE: I could've done a Cartesian product between the above two queries, 
-             * and then calculated the Jaccard similarity between each relvant 
-             * set of attributes in the tuple, but I felt that this would increase
-             * the code complexity, while  not necessarily decreasing 
-             * the run time of the program. So instead, here's a while loop.
-             */ 
-             
-            // Iterate through politicians and calculate their Jaccard similarity
-            // to politicianID's description and comment
-            while(rs.next()) {
-                int newID = rs.getInt("id");
-                String newInput = rs.getString("description") + 
-                        " " + rs.getString("comment");
-                float jSimilarity = (float)similarity(presidentInput, newInput);
-                
-                //TESTING
-//              System.out.println(jSimilarity);
-//              System.out.println("\n");
-                 
-                 
-                if(jSimilarity >= threshold){
-                    similarPresidents.add(newID);
+            psAll = connection.prepareStatement(allPresidentQ);
+            infoResult2 = psAll.executeQuery();
+
+            while(infoResult2.next()){
+                //String tempPInfo = infoResult2.getString("description") + " " + infoResult2.getString("comment");
+                String tempPInfoD = infoResult2.getString("description");
+                String tempPInfoDC = infoResult2.getString("description") + " " + infoResult2.getString("comment");
+                String tempPInfoCD = infoResult2.getString("comment") + " " + infoResult2.getString("description");
+
+                //compare everyone with the given one
+                double JSimilarityD = similarity(tempPInfoD, givenPInfoD);
+                double JSimilarityDC = similarity(tempPInfoDC, givenPInfoDC);
+                double JSimilarityCD = similarity(tempPInfoCD, givenPInfoCD);
+                //have the id ready
+                int validID = infoResult2.getInt("id");
+                if ( (JSimilarityDC >= threshold) || (JSimilarityCD >= threshold) ){
+                    result.add(validID);
                 }
             }
         }
-        
-       
         catch (SQLException se) {
-            System.err.println("SQL Exception." +
-                    "<Message>: " + se.getMessage());
+            System.err.println("SQL Exception." + "<Message>: " + se.getMessage());
+            return null;
         }
-        
-        return similarPresidents;
+        return result;
     }
 
-//    public static void main(String[] args) {
-//        // You can put testing code in here. It will not affect our autotester.
-//      try {
-//      Assignment2 test = new Assignment2();
-//      boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
-//      System.out.println(t);
-//      
-//      List<Integer> similarPresidents = test.findSimilarPoliticians(148, (float)0.0);
-//      Integer lenSP = similarPresidents.size();
-//      Integer i =  0;
-//      
-//      while(i < lenSP) {
-//          System.out.println(similarPresidents.get(i));
-//          i += 1;
-//      }
-//      
-//      
-//      boolean t1 = test.disconnectDB();
-//      System.out.println(t);
-//      }
-//      
-//      catch (ClassNotFoundException e) {
-//          System.out.println("Failed to find JDBC driver");
-//      }
-//   }
+
 
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
-         try {
-            Assignment2 testcase = new Assignment2();
-            testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
-            ElectionCabinetResult a = testcase.electionSequence("Japan");
+        //System.out.println("Hello");
+          // You can put testing code in here. It will not affect our autotester.
+  //        try {
+  //           Assignment2 testcase = new Assignment2();
+  //           testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
+  //           ElectionCabinetResult a = testcase.electionSequence("Japan");
 
-            System.out.println("election id | cabinet id");
+  //           System.out.println("election id | cabinet id");
 
-            for(int i = 0; i < a.elections.size(); ++i) {
-                System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
-            }
+  //           for(int i = 0; i < a.elections.size(); ++i) {
+  //               System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
+  //           }
             
-                       // // Test findSimilarPoliticians
-            List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
-            System.out.println("Test 2:");
-            for(int i : b) {
-                 System.out.println(i);
-            }
+        //                // // Test findSimilarPoliticians
+  //           List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
+  //           System.out.println("Test 2:");
+  //           for(int i : b) {
+  //                System.out.println(i);
+  //           }
 
-            testcase.disconnectDB();
-        }
+  //           testcase.disconnectDB();
+  //       }
 
-        catch (ClassNotFoundException e) {
-            System.out.println("Failed to find JDBC driver");
-        }
+  //       catch (ClassNotFoundException e) {
+        //     System.out.println("Failed to find JDBC driver");
+        // }
+        
     }
 
 }
+
+
+
+
+
+
+
+
 
