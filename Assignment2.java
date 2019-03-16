@@ -176,28 +176,20 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
         //System.out.println("Hello");
           // You can put testing code in here. It will not affect our autotester.
-        try{
-            Assignment2 test = new Assignment2();
-
-            test.connectDB(
-                "jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", 
-                "cuidongf", "");
-
-         // Test election sequence
-            System.out.println("Test 1:");
-            ElectionCabinetResult a = test.electionSequence("Canada");
-            for(int i = 0; i < a.elections.size(); ++i) {
-                System.out.println("Election: " + a.elections.get(i) + " Cabinet: " + a.cabinets.get(i));
+         try {
+            Assignment2 testcase = new Assignment2();
+            testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-wangy542?currentSchema=parlgov", "wangy542", "");
+            ElectionCabinetResult a = test.electionSequence("Japan");
+           System.out.println(a.elections.get("election id | cabinet id");
+             for(int i = 0; i < a.elections.size(); ++i) {
+             System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
             }
+            testcase.disconnectDB();
+        }
 
-        // Test findSimilarPoliticians
-            List<Integer> b = test.findSimilarPoliticians(9, (float)0.0);
-            System.out.println("Test 2:");
-            for(int i : b) {
-                System.out.println(i);
-            }
-
-            test.disconnectDB();
+        catch (ClassNotFoundException e) {
+            System.err.println("SQL Exception." +
+                       "<Message>: " + e.getMessage());
         }
         catch (ClassNotFoundException e) {
 		    System.out.println("Failed to find JDBC driver");
