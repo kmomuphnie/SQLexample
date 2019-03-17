@@ -160,30 +160,30 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
         //System.out.println("Hello");
           // You can put testing code in here. It will not affect our autotester.
-         try {
-            Assignment2 testcase = new Assignment2();
-            testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
-            ElectionCabinetResult a = testcase.electionSequence("Japan");
+        //  try {
+        //     Assignment2 testcase = new Assignment2();
+        //     testcase.connectDB("jdbc:postgresql://localhost:5432/csc343h-cuidongf?currentSchema=parlgov", "cuidongf", "");
+        //     ElectionCabinetResult a = testcase.electionSequence("Japan");
 
-            System.out.println("election id | cabinet id");
+        //     System.out.println("election id | cabinet id");
 
-            for(int i = 0; i < a.elections.size(); ++i) {
-                System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
-            }
+        //     for(int i = 0; i < a.elections.size(); ++i) {
+        //         System.out.println(a.elections.get(i) + " | " + a.cabinets.get(i));
+        //     }
             
-                       // // Test findSimilarPoliticians
-            List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
-            System.out.println("Test 2:");
-            for(int i : b) {
-                 System.out.println(i);
-            }
+        //     // Test findSimilarPoliticians
+        //     List<Integer> b = testcase.findSimilarPoliticians(9, (float)0.0);
+        //     System.out.println("Test 2:");
+        //     for(int i : b) {
+        //          System.out.println(i);
+        //     }
 
-            testcase.disconnectDB();
-        }
+        //     testcase.disconnectDB();
+        // }
 
-        catch (ClassNotFoundException e) {
-            System.out.println("Failed to find JDBC driver");
-        }
+        // catch (ClassNotFoundException e) {
+        //     System.out.println("Failed to find JDBC driver");
+        // }
         
     }
 
