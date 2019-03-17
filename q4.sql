@@ -16,15 +16,23 @@ CREATE VIEW  party1 AS
 	FROM party;
 
 --get all elections in each country in each year
+-- CREATE VIEW electionHistory AS
+-- 	SELECT EXTRACT(YEAR FROM election.e_date) AS year, country.id, country.name AS countryName,
+-- 			election.id AS election_id,
+-- 			(CASE WHEN election.votes_valid IS NULL
+-- 				 THEN (SELECT SUM(votes) FROM election_result
+-- 				 		WHERE election_result.election_id = election.id)
+-- 				 ELSE election.votes_valid
+-- 			 END) AS votesPool
+-- 	FROM election JOIN country ON country.id = election.country_id;
+
 CREATE VIEW electionHistory AS
 	SELECT EXTRACT(YEAR FROM election.e_date) AS year, country.id, country.name AS countryName,
 			election.id AS election_id,
-			(CASE WHEN election.votes_valid IS NULL
-				 THEN (SELECT SUM(votes) FROM election_result
-				 		WHERE election_result.election_id = election.id)
-				 ELSE election.votes_valid
-			 END) AS votesPool
-	FROM election JOIN country ON country.id = election.country_id;
+			election.votes_valid AS votesPool
+	FROM election JOIN country ON country.id = election.country_id
+	WHERE votes_valid IS NOT NULL;
+
 
 CREATE VIEW partyEHistory AS
 	SELECT party1.party_id, country_id, partyName, election_result.election_id, election_result.votes AS party_votes
